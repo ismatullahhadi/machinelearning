@@ -1,4 +1,4 @@
-# imports -------------------------------------------------------------------------#
+# Import Library
 import sys
 import os
 import argparse
@@ -27,38 +27,38 @@ def run(p_seed=0, p_epochs=150, p_kernel_size=5, p_logdir="temp"):
     torch.cuda.manual_seed_all(SEED)
     np.random.seed(SEED)
 
-    # kernel size of model --------------------------------------------------------#
+    # ukuran kernel dari model
     KERNEL_SIZE = p_kernel_size
 
-    # number of epochs ------------------------------------------------------------#
+    # jumlah epochs
     NUM_EPOCHS = p_epochs
 
-    # file names ------------------------------------------------------------------#
+    # pembuatan nama file
     if not os.path.exists("../logs/%s"%p_logdir):
         os.makedirs("../logs/%s"%p_logdir)
     OUTPUT_FILE = str("../logs/%s/log%03d.out"%(p_logdir,SEED))
     MODEL_FILE = str("../logs/%s/model%03d.pth"%(p_logdir,SEED))
 
-    # enable GPU usage ------------------------------------------------------------#
+    # Pengizinan penggunaan GPU
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     if use_cuda == False:
         print("WARNING: CPU will be used for training.")
         exit(0)
 
-    # data augmentation methods ---------------------------------------------------#
+    # Metode data augmentasi
     transform = transforms.Compose([
         RandomRotation(20, seed=SEED),
         transforms.RandomAffine(0, translate=(0.2, 0.2)),
         ])
 
-    # data loader -----------------------------------------------------------------#
+    # Pemuatan data
     train_dataset = MnistDataset(training=True, transform=transform)
     test_dataset = MnistDataset(training=False, transform=None)
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=120, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
 
-    # model selection -------------------------------------------------------------#
+    # Pemilihan model
     if(KERNEL_SIZE == 3):
         model = ModelM3().to(device)
     elif(KERNEL_SIZE == 5):
@@ -68,23 +68,23 @@ def run(p_seed=0, p_epochs=150, p_kernel_size=5, p_logdir="temp"):
 
     summary(model, (1, 28, 28))
 
-    # hyperparameter selection ----------------------------------------------------#
+    # Pemilihan Hyperparameter
     ema = EMA(model, decay=0.999)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.98)
 
-    # delete result file ----------------------------------------------------------#
+    # hapus file hasil
     f = open(OUTPUT_FILE, 'w')
     f.close()
 
-    # global variables ------------------------------------------------------------#
+    # variabel global
     g_step = 0
     max_correct = 0
 
-    # training and evaluation loop ------------------------------------------------#
+    # loop untuk training dan evaluation
     for epoch in range(NUM_EPOCHS):
         #--------------------------------------------------------------------------#
-        # train process                                                            #
+        # proses train                                                             #
         #--------------------------------------------------------------------------#
         model.train()
         train_loss = 0
@@ -109,7 +109,7 @@ def run(p_seed=0, p_epochs=150, p_kernel_size=5, p_logdir="temp"):
         train_accuracy = 100 * train_corr / len(train_loader.dataset)
 
         #--------------------------------------------------------------------------#
-        # test process                                                             #
+        # proses test                                                              #
         #--------------------------------------------------------------------------#
         model.eval()
         ema.assign(model)
@@ -146,7 +146,7 @@ def run(p_seed=0, p_epochs=150, p_kernel_size=5, p_logdir="temp"):
         f.close()
 
         #--------------------------------------------------------------------------#
-        # update learning rate scheduler                                           #
+        # memperbarui penjadwalan learning rate                                    #
         #--------------------------------------------------------------------------#
         lr_scheduler.step()
 

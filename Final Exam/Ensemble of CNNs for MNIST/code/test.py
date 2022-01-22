@@ -1,4 +1,4 @@
-# imports ---------------------------------------------------------------------#
+# Peng-import-an library yang diperlukan
 import sys
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
@@ -21,18 +21,18 @@ from models.modelM7 import ModelM7
 
 def run(p_seed=0, p_kernel_size=5, p_logdir="temp"):
 
-    # enable GPU usage ------------------------------------------------------------#
+    # Mengizinkan penggunaan GPU
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     if use_cuda == False:
         print("WARNING: CPU will be used for training.")
         exit(0)
 
-    # data loader -----------------------------------------------------------------#
+    # Pemuatan Data
     test_dataset = MnistDataset(training=False, transform=None)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100, shuffle=False)
 
-    # model selection -------------------------------------------------------------#
+    # Pemilihan Model
     if(p_kernel_size == 3):
         model1 = ModelM3().to(device)
     elif(p_kernel_size == 5):
