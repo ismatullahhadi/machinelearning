@@ -1,6 +1,6 @@
 import utils
 
-# Melakukan klasifikasi pada tweet berdasarkan jumlah dari kata positif dan negatif di dalamnya
+# Classifies a tweet based on the number of positive and negative words in it
 
 TRAIN_PROCESSED_FILE = 'train-processed.csv'
 TEST_PROCESSED_FILE = 'test-processed.csv'

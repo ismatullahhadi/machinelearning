@@ -1,8 +1,6 @@
-# Import Library
 import numpy as np 
 import argparse
 
-# Deklarasi Variabel
 cnt = 1
 best = 10000
 curr = 10000
